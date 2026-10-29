@@ -1,6 +1,6 @@
 <div align="center">
 
-  <img src="assets/banner.svg" alt="Windows Deep Cleaner Banner" width="100%" />
+  <img src="assets/banner.png" alt="Windows Deep Cleaner Banner" width="100%" />
 
   <br />
 

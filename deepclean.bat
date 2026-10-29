@@ -27,6 +27,13 @@ echo                Developed by Abhigyan Sati (@a4ik7)
 echo ======================================================================
 echo.
 
+:: Measure free disk space before cleanup
+echo [*] Analyzing system storage before cleanup...
+for /f "delims=" %%a in ('powershell -NoProfile -Command "(Get-PSDrive C).Free"') do set "BYTES_BEFORE=%%a"
+for /f "delims=" %%d in ('powershell -NoProfile -Command "'{0:N2} GB' -f ([double]%BYTES_BEFORE% / 1GB)"') do set "FREE_BEFORE_GB=%%d"
+echo [i] Initial Free Space on C: Drive: %FREE_BEFORE_GB%
+echo.
+
 :: ====================================================================
 :: 2. OPEN PREFETCH LOCATION & CLEAN PREFETCH
 :: ====================================================================
@@ -156,15 +163,30 @@ echo [+] DNS Resolver cache successfully flushed.
 echo.
 
 :: ====================================================================
-:: 10. COMPLETION
+:: 10. MEASURE RESULTS & POPUP SUMMARY MESSAGE
 :: ====================================================================
+for /f "delims=" %%b in ('powershell -NoProfile -Command "(Get-PSDrive C).Free"') do set "BYTES_AFTER=%%b"
+
+for /f "delims=" %%c in ('powershell -NoProfile -Command "$diff = [double]%BYTES_AFTER% - [double]%BYTES_BEFORE%; if ($diff -ge 1073741824) { '{0:N2} GB' -f ($diff / 1GB) } elseif ($diff -gt 0) { '{0:N2} MB' -f ($diff / 1MB) } else { '0 MB (System already optimized)' }"') do set "FREED_DISPLAY=%%c"
+for /f "delims=" %%e in ('powershell -NoProfile -Command "'{0:N2} GB' -f ([double]%BYTES_AFTER% / 1GB)"') do set "FREE_AFTER_GB=%%e"
+
 echo ======================================================================
 echo                  ALL CLEANUP COMPLETED SUCCESSFULLY!
+echo ======================================================================
+echo.
+echo   [i] Free space before cleanup : %FREE_BEFORE_GB%
+echo   [i] Free space after cleanup  : %FREE_AFTER_GB%
+echo   [+] Total disk space freed    : %FREED_DISPLAY%
+echo.
 echo ======================================================================
 echo.
 echo  [*] Note: Windows Settings has been opened so you can also review or click
 echo      'Remove files' under Temporary files.
 echo.
-echo  Press any key to exit...
+
+:: Trigger Native Windows Pop-up Notification Dialog
+start "" powershell -NoProfile -Command "[System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms') | Out-Null; [System.Windows.Forms.MessageBox]::Show('Windows Deep Cleaner completed successfully!`n`n[+] Total Space Freed: %FREED_DISPLAY%`n`n• Free space before: %FREE_BEFORE_GB%`n• Free space after: %FREE_AFTER_GB%', 'Windows Deep Cleaner', 0, 64)"
+
+echo Press any key to exit...
 pause >nul
 exit /b 0
