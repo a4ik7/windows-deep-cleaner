@@ -11,11 +11,11 @@
   </p>
 
   <p align="center">
-    <a href="https://github.com/abhigyansati/windows-deep-cleaner/actions"><img src="https://img.shields.io/badge/CI%20Build-Passing-brightgreen?style=for-the-badge&logo=github-actions&logoColor=white" alt="CI Build Status" /></a>
+    <a href="https://github.com/a4ik7/windows-deep-cleaner/actions"><img src="https://img.shields.io/badge/CI%20Build-Passing-brightgreen?style=for-the-badge&logo=github-actions&logoColor=white" alt="CI Build Status" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT License" /></a>
-    <a href="https://github.com/abhigyansati/windows-deep-cleaner/stargazers"><img src="https://img.shields.io/github/stars/abhigyansati/windows-deep-cleaner?style=for-the-badge&color=gold" alt="GitHub Stars" /></a>
-    <a href="https://github.com/abhigyansati/windows-deep-cleaner/network/members"><img src="https://img.shields.io/github/forks/abhigyansati/windows-deep-cleaner?style=for-the-badge&color=blueviolet" alt="GitHub Forks" /></a>
-    <a href="https://github.com/abhigyansati/windows-deep-cleaner/issues"><img src="https://img.shields.io/github/issues/abhigyansati/windows-deep-cleaner?style=for-the-badge&color=orange" alt="GitHub Issues" /></a>
+    <a href="https://github.com/a4ik7/windows-deep-cleaner/stargazers"><img src="https://img.shields.io/github/stars/a4ik7/windows-deep-cleaner?style=for-the-badge&color=gold" alt="GitHub Stars" /></a>
+    <a href="https://github.com/a4ik7/windows-deep-cleaner/network/members"><img src="https://img.shields.io/github/forks/a4ik7/windows-deep-cleaner?style=for-the-badge&color=blueviolet" alt="GitHub Forks" /></a>
+    <a href="https://github.com/a4ik7/windows-deep-cleaner/issues"><img src="https://img.shields.io/github/issues/a4ik7/windows-deep-cleaner?style=for-the-badge&color=orange" alt="GitHub Issues" /></a>
     <img src="https://img.shields.io/badge/Platform-Windows%2010%20%7C%2011-0078D6?style=for-the-badge&logo=windows&logoColor=white" alt="Platform" />
   </p>
 
@@ -110,13 +110,13 @@ Over time, Windows accumulates tens of gigabytes in obsolete temporary installer
 ### Method 1: Instant One-Liner (PowerShell)
 Open PowerShell as Administrator and run:
 ```powershell
-irm https://raw.githubusercontent.com/abhigyansati/windows-deep-cleaner/main/deepclean.bat -OutFile deepclean.bat; .\deepclean.bat
+irm https://raw.githubusercontent.com/a4ik7/windows-deep-cleaner/main/deepclean.bat -OutFile deepclean.bat; .\deepclean.bat
 ```
 
 ### Method 2: Git Clone
 ```bash
 # Clone the repository
-git clone https://github.com/abhigyansati/windows-deep-cleaner.git
+git clone https://github.com/a4ik7/windows-deep-cleaner.git
 
 # Enter the directory
 cd windows-deep-cleaner
@@ -126,7 +126,7 @@ deepclean.bat
 ```
 
 ### Method 3: Direct Download
-1. Download [`deepclean.bat`](https://raw.githubusercontent.com/abhigyansati/windows-deep-cleaner/main/deepclean.bat).
+1. Download [`deepclean.bat`](https://raw.githubusercontent.com/a4ik7/windows-deep-cleaner/main/deepclean.bat).
 2. Right-click the downloaded file and select **Run as administrator**.
 
 ---
@@ -219,8 +219,8 @@ Please review [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.
 **Windows Deep Cleaner** is maintained and created with passion by:
 
 - **Abhigyan Sati**
-  - GitHub: [@abhigyansati](https://github.com/abhigyansati)
-  - Project Link: [https://github.com/abhigyansati/windows-deep-cleaner](https://github.com/abhigyansati/windows-deep-cleaner)
+  - GitHub: [@a4ik7](https://github.com/a4ik7)
+  - Project Link: [https://github.com/a4ik7/windows-deep-cleaner](https://github.com/a4ik7/windows-deep-cleaner)
 
 ---
 

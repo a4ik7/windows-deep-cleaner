@@ -24,7 +24,7 @@ This project and everyone participating in it is governed by our [Code of Conduc
 
 ### Reporting Bugs
 If you encounter an issue or an unexpected behavior on your Windows version:
-1. Check the [Issues tab](https://github.com/abhigyansati/windows-deep-cleaner/issues) to make sure the bug hasn't already been reported.
+1. Check the [Issues tab](https://github.com/a4ik7/windows-deep-cleaner/issues) to make sure the bug hasn't already been reported.
 2. If not, open a new issue using our **Bug Report Template**.
 3. Include your exact Windows build (`winver`), script output or error logs, and whether you ran it in Administrator mode.
 
@@ -53,4 +53,4 @@ Got an idea for another safe cache to purge or a useful CLI flag?
 ---
 
 ## 💬 Community & Questions
-Feel free to open a [Discussion](https://github.com/abhigyansati/windows-deep-cleaner/discussions) or reach out to project author **Abhigyan Sati**.
+Feel free to open a [Discussion](https://github.com/a4ik7/windows-deep-cleaner/discussions) or reach out to project author **Abhigyan Sati** ([@a4ik7](https://github.com/a4ik7)).

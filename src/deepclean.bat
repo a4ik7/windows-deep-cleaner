@@ -2,7 +2,7 @@
 :: ============================================================================
 ::  Windows Deep Cleaner (WDC) - Professional Edition
 ::  Author      : Abhigyan Sati
-::  Repository  : https://github.com/abhigyansati/windows-deep-cleaner
+::  Repository  : https://github.com/a4ik7/windows-deep-cleaner
 ::  License     : MIT License
 ::  Description : High-performance Windows cache, prefetch, settings temporary
 ::                files, recent history, and recycle bin deep cleaning engine.
@@ -290,7 +290,7 @@ echo    [+] Total Space Freed  : !SPACE_FREED! GB
 echo.
 echo  ==============================================================================
 echo               CLEANUP COMPLETED SUCCESSFULLY! THANK YOU!
-echo               Project: https://github.com/abhigyansati/windows-deep-cleaner
+echo               Project: https://github.com/a4ik7/windows-deep-cleaner
 echo  ==============================================================================
 echo.
 if "%OPEN_GUI%"=="1" (
@@ -450,7 +450,7 @@ echo    deepclean.bat /help       Show this help documentation
 echo    deepclean.bat /version    Display version information
 echo.
 echo  For full documentation and updates, visit:
-echo  https://github.com/abhigyansati/windows-deep-cleaner
+echo  https://github.com/a4ik7/windows-deep-cleaner
 echo ==============================================================================
 echo.
 exit /b 0

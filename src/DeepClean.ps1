@@ -2,7 +2,7 @@
 .SYNOPSIS
     Windows Deep Cleaner (WDC) - PowerShell Edition
     Developed by Abhigyan Sati
-    Repository: https://github.com/abhigyansati/windows-deep-cleaner
+    Repository: https://github.com/a4ik7/windows-deep-cleaner
 
 .DESCRIPTION
     High-performance Windows system cleaner and disk optimization utility.
@@ -161,5 +161,5 @@ Write-Host "  [i] Initial Free Space : $initialFree GB" -ForegroundColor White
 Write-Host "  [i] Final Free Space   : $finalFree GB" -ForegroundColor White
 Write-Host "  [+] Total Space Freed  : $spaceFreed GB" -ForegroundColor Green
 Write-Host "==============================================================================" -ForegroundColor Green
-Write-Host "  Project GitHub: https://github.com/abhigyansati/windows-deep-cleaner" -ForegroundColor DarkCyan
+Write-Host "  Project GitHub: https://github.com/a4ik7/windows-deep-cleaner" -ForegroundColor DarkCyan
 Write-Host ""
