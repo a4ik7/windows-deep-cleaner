@@ -1,0 +1,36 @@
+name: CI Syntax & Lint Check
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  validate-scripts:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Validate Batch Script Syntax & CLI Switches
+        shell: cmd
+        run: |
+          echo Testing batch script help flag...
+          cmd /c "deepclean.bat /help"
+          cmd /c "deepclean.bat /version"
+          cmd /c "src\deepclean.bat /help"
+
+      - name: Validate PowerShell Script Syntax
+        shell: pwsh
+        run: |
+          $errors = @()
+          $tokens = $null
+          $ast = [System.Management.Automation.Language.Parser]::ParseFile("src/DeepClean.ps1", [ref]$tokens, [ref]$errors)
+          if ($errors.Count -gt 0) {
+              Write-Error "PowerShell parse errors found:"
+              $errors | ForEach-Object { Write-Error $_.Message }
+              exit 1
+          } else {
+              Write-Host "PowerShell script syntax is valid."
+          }

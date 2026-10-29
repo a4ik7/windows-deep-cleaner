@@ -1,0 +1,29 @@
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Windows temp & editor logs
+*.tmp
+*.temp
+*.log
+*.bak
+*.swp
+
+# IDE & Editor Configs
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# PowerShell History / Artifacts
+*.ps1xml
+*~
+
+# Test & Debug Output
+debug.txt
+test-output/
+scratch/

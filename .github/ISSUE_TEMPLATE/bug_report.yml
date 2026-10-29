@@ -1,0 +1,66 @@
+name: 🐛 Bug Report
+description: Create a report to help us improve Windows Deep Cleaner
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please provide as much context as possible.
+
+  - type: input
+    id: os_version
+    attributes:
+      label: Windows Version & OS Build
+      description: Run `winver` in Start/Run and paste your OS Build (e.g., Windows 11 Pro 23H2 Build 22631.3007).
+      placeholder: "Windows 11 Pro (Build 22631.3007)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: script_used
+    attributes:
+      label: Script Version Used
+      options:
+        - "deepclean.bat (Batch Edition)"
+        - "src/DeepClean.ps1 (PowerShell Edition)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: run_mode
+    attributes:
+      label: Execution Mode
+      options:
+        - "Automated / Express Clean (/auto or Option 1)"
+        - "Visual Deep Clean (/visual or Option 2)"
+        - "Open Locations (/open or Option 3)"
+        - "Custom / Selective (Option 4)"
+        - "Silent Mode (/silent)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: what_happened
+    attributes:
+      label: Describe the Bug
+      description: What unexpected behavior or error message occurred?
+      placeholder: "A clear and concise description of what happened."
+    validations:
+      required: true
+
+  - type: textarea
+    id: console_output
+    attributes:
+      label: Terminal Output / Error Logs
+      description: Copy and paste the terminal error messages or output here.
+      render: shell
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Pre-submission Checklist
+      options:
+        - label: I ran the script with Administrator privileges.
+          required: true
+        - label: I searched existing issues and confirmed this is not a duplicate.
+          required: true
