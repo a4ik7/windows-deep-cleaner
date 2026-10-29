@@ -1,0 +1,48 @@
+<svg width="1200" height="380" viewBox="0 0 1200 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="neura-bg" x1="0" y1="0" x2="1200" y2="380" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#140A26" />
+      <stop offset="50%" stop-color="#241142" />
+      <stop offset="100%" stop-color="#0A0514" />
+    </linearGradient>
+    <linearGradient id="purple-grad" x1="0" y1="0" x2="500" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#EC4899" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1200" height="380" rx="16" fill="url(#neura-bg)" />
+  <rect x="1" y="1" width="1198" height="378" rx="15" fill="none" stroke="#3B1D6B" stroke-width="2" />
+  <rect x="0" y="0" width="1200" height="3" rx="1.5" fill="url(#purple-grad)" />
+
+  <g transform="translate(80, 60)">
+    <rect width="260" height="30" rx="15" fill="#2E1256" stroke="#A855F7" stroke-width="1" stroke-opacity="0.5" />
+    <circle cx="15" cy="15" r="4.5" fill="#A855F7" />
+    <text x="30" y="19" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="700" fill="#E9D5FF" letter-spacing="1">PYTHON • TKINTER • SQLITE</text>
+  </g>
+
+  <text x="80" y="150" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="52" font-weight="800" fill="#FFFFFF" letter-spacing="-1">
+    Neurabot Chat
+  </text>
+  <text x="80" y="190" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="18" font-weight="400" fill="#D8B4FE">
+    Offline Knowledge-Base Conversational Agent with Dynamic Response Learning
+  </text>
+
+  <g transform="translate(80, 230)">
+    <rect x="0" y="0" width="150" height="34" rx="8" fill="#2B134E" stroke="#581C87" stroke-width="1" />
+    <text x="14" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#F3E8FF">🔒 100% Offline</text>
+
+    <rect x="165" y="0" width="160" height="34" rx="8" fill="#2B134E" stroke="#581C87" stroke-width="1" />
+    <text x="14" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#F3E8FF">🗄️ SQLite Storage</text>
+
+    <rect x="340" y="0" width="170" height="34" rx="8" fill="#2B134E" stroke="#581C87" stroke-width="1" />
+    <text x="14" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#F3E8FF">🧠 Pattern Matching</text>
+
+    <rect x="525" y="0" width="165" height="34" rx="8" fill="#2B134E" stroke="#581C87" stroke-width="1" />
+    <text x="14" y="21" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="12" font-weight="600" fill="#F3E8FF">⚡ Zero Cloud Latency</text>
+  </g>
+
+  <text x="80" y="320" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="13" font-weight="500" fill="#94A3B8">
+    Crafted by Abhigyan Sati • github.com/a4ik7/Neurabot-chat
+  </text>
+</svg>
