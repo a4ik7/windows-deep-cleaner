@@ -132,9 +132,9 @@ echo.
 :: 7. WINDOWS UPDATE DOWNLOAD CACHE & DELIVERY OPTIMIZATION
 :: ====================================================================
 echo [*] Cleaning Windows Update packages and Delivery Optimization...
-net stop wuauserv >nul 2>&1
-net stop bits >nul 2>&1
-net stop dosvc >nul 2>&1
+net stop wuauserv /y >nul 2>&1
+net stop bits /y >nul 2>&1
+net stop dosvc /y >nul 2>&1
 
 del /s /f /q "%SystemRoot%\SoftwareDistribution\Download\*.*" >nul 2>&1
 for /d %%p in ("%SystemRoot%\SoftwareDistribution\Download\*.*") do rmdir /s /q "%%p" >nul 2>&1
@@ -170,6 +170,248 @@ reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Th
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Update Cleanup" /v StateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Upgrade Discarded Files" /v StateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Windows Defender" /v StateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Windows Error Reporting Files" /v StateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
+reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Windows Upgrade Log Files" /v StateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
+
+:: /wait makes the script pause until Disk Cleanup finishes,
+:: so the "space freed" number is measured AFTER all cleanup is really done.
+echo [*] Waiting for Windows Disk Cleanup to finish (this can take a few minutes)...
+start "" /wait cleanmgr.exe /sagerun:64
+echo [+] Storage Sense cleanup finished.
+echo.
+
+:: ====================================================================
+:: 9. FLUSH DNS RESOLVER CACHE
+:: ====================================================================
+echo [*] Flushing DNS cache...
+ipconfig /flushdns >nul 2>&1
+echo [+] DNS Resolver cache successfully flushed.
+echo.
+
+:: ====================================================================
+:: 10. MEASURE RESULTS & SHOW THE RESULTS POPUP
+:: ====================================================================
+for /f "tokens=1,2 delims=;" %%a in ('powershell -NoProfile -ExecutionPolicy Bypass -File "%UI%" drive') do set "DC_AFTER=%%a"
+
+for /f "tokens=1-4 delims=;" %%a in ('powershell -NoProfile -ExecutionPolicy Bypass -File "%UI%" summary') do (
+    set "S_FOUND=%%a"
+    set "S_FREED=%%b"
+    set "S_BEFORE=%%c"
+    set "S_AFTER=%%d"
+)
+
+echo ======================================================================
+echo                  ALL CLEANUP COMPLETED SUCCESSFULLY
+echo ======================================================================
+echo.
+echo   [i] Unnecessary data found    : %S_FOUND%
+echo   [i] Free space before cleanup : %S_BEFORE%
+echo   [i] Free space after cleanup  : %S_AFTER%
+echo   [+] Total disk space freed    : %S_FREED%
+echo.
+echo ======================================================================
+echo.
+echo  [*] Note: Windows Settings has been opened so you can also review or click
+echo      'Remove files' under Temporary files.
+echo.
+
+:: Show the results window WITHOUT waiting for it (no blocking, no key press needed).
+:: The popup script deletes itself after the window is closed.
+start "" powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "%UI%" popup
+
+exit /b 0
+
+#PSBEGIN
+param([string]$Mode = 'popup', [string]$Arg = '')
+$ErrorActionPreference = 'SilentlyContinue'
+
+function Fmt([double]$b) {
+    if ($b -ge 1GB) { return ('{0:N2} GB' -f ($b / 1GB)) }
+    if ($b -ge 1MB) { return ('{0:N0} MB' -f ($b / 1MB)) }
+    return ('{0:N0} KB' -f ($b / 1KB))
+}
+
+function Get-Bytes([string]$Path, [string]$Filter = '*') {
+    if (-not (Test-Path -LiteralPath $Path)) { return [double]0 }
+    $m = Get-ChildItem -LiteralPath $Path -Filter $Filter -Recurse -Force -File -ErrorAction SilentlyContinue | Measure-Object -Property Length -Sum
+    if ($m.Sum) { return [double]$m.Sum }
+    return [double]0
+}
+
+if ($Mode -eq 'fmt') { Write-Output (Fmt ([double]$Arg)); return }
+
+if ($Mode -eq 'drive') {
+    $d = Get-PSDrive C
+    Write-Output ('{0};{1}' -f [int64]$d.Free, [int64]($d.Used + $d.Free))
+    return
+}
+
+if ($Mode -eq 'measure') {
+    $c1 = (Get-Bytes $env:TEMP) + (Get-Bytes "$env:SystemRoot\Temp")
+    $c2 = (Get-Bytes "$env:SystemRoot\SoftwareDistribution\Download") + (Get-Bytes "$env:SystemRoot\SoftwareDistribution\DeliveryOptimization")
+    $c3 = 0
+    $shaderPaths = @(
+        "$env:LocalAppData\D3DSCache",
+        "$env:LocalAppData\NVIDIA\DXCache",
+        "$env:LocalAppData\AMD\DxCache",
+        "$env:LocalAppData\CrashDumps",
+        "$env:ProgramData\Microsoft\Windows\WER\ReportArchive",
+        "$env:ProgramData\Microsoft\Windows\WER\ReportQueue",
+        "$env:ProgramData\Microsoft\Windows\WER\Temp",
+        "$env:LocalAppData\Microsoft\Windows\INetCache",
+        "$env:SystemRoot\Panther"
+    )
+    foreach ($p in $shaderPaths) { $c3 += Get-Bytes $p }
+    $c3 += Get-Bytes "$env:SystemRoot\inf" '*.log'
+    $c4 = (Get-Bytes "$env:SystemRoot\Prefetch") + (Get-Bytes "$env:AppData\Microsoft\Windows\Recent")
+    foreach ($dr in (Get-PSDrive -PSProvider FileSystem)) { $c4 += Get-Bytes (Join-Path $dr.Root '$Recycle.Bin') }
+    Write-Output ('{0};{1};{2};{3}' -f [int64]$c1, [int64]$c2, [int64]$c3, [int64]$c4)
+    return
+}
+
+# ---- numbers shared by 'summary' and 'popup' ----
+$c1 = [double]$env:DC_C1
+$c2 = [double]$env:DC_C2
+$c3 = [double]$env:DC_C3
+$c4 = [double]$env:DC_C4
+$before = [double]$env:DC_BEFORE
+$after  = [double]$env:DC_AFTER
+$total  = [double]$env:DC_TOTAL
+
+$freed    = [math]::Max(0, $after - $before)
+$measured = $c1 + $c2 + $c3 + $c4
+$junk     = [math]::Max($measured, $freed)
+$extra    = [math]::Max(0, $junk - $measured)
+$pct = 100
+if ($junk -gt 0) { $pct = [int][math]::Min(100, [math]::Round(100 * $freed / $junk)) }
+
+if ($Mode -eq 'summary') {
+    Write-Output ('{0};{1};{2};{3}' -f (Fmt $junk), (Fmt $freed), (Fmt $before), (Fmt $after))
+    return
+}
+
+# ---- results window (Option A) ----
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+Add-Type -TypeDefinition 'using System.Runtime.InteropServices; public class DcDpi { [DllImport("user32.dll")] public static extern bool SetProcessDPIAware(); }'
+[void][DcDpi]::SetProcessDPIAware()
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+function Col([string]$hex) { return [System.Drawing.ColorTranslator]::FromHtml($hex) }
+$cDark   = Col '#2C2C2A'
+$cMuted  = Col '#5F5E5A'
+$cLine   = Col '#E5E3DC'
+$cCard   = Col '#F5F4F0'
+$cGreen  = Col '#3B6D11'
+$cGreenD = Col '#27500A'
+$cGreenBg = Col '#EAF3DE'
+$cGrayBar = Col '#B4B2A9'
+$cTrack  = Col '#F1EFE8'
+
+function New-Label([string]$text, $x, $y, $w, $h, $size, [string]$fam, [string]$style, $color, [string]$align) {
+    $l = New-Object System.Windows.Forms.Label
+    $l.AutoSize = $false
+    $l.Text = $text
+    $l.Location = New-Object System.Drawing.Point($x, $y)
+    $l.Size = New-Object System.Drawing.Size($w, $h)
+    $l.Font = New-Object System.Drawing.Font($fam, [single]$size, [System.Drawing.FontStyle]$style)
+    $l.ForeColor = $color
+    $l.BackColor = [System.Drawing.Color]::Transparent
+    $l.TextAlign = $align
+    return $l
+}
+
+function Set-Round($ctl) {
+    $r = [int]($ctl.Height * 0.1)
+    $d = $r * 2
+    $w = $ctl.Width
+    $h = $ctl.Height
+    $p = New-Object System.Drawing.Drawing2D.GraphicsPath
+    $p.AddArc(0, 0, $d, $d, 180, 90)
+    $p.AddArc($w - $d, 0, $d, $d, 270, 90)
+    $p.AddArc($w - $d, $h - $d, $d, $d, 0, 90)
+    $p.AddArc(0, $h - $d, $d, $d, 90, 90)
+    $p.CloseFigure()
+    $ctl.Region = New-Object System.Drawing.Region($p)
+}
+
+$rows = @(
+    @('Temp files', (Fmt $c1)),
+    @('Windows Update cache', (Fmt $c2)),
+    @('Shader cache, crash dumps and logs', (Fmt $c3)),
+    @('Recycle Bin, Prefetch and recent files', (Fmt $c4))
+)
+if ($extra -gt 50MB) { $rows += ,@('Other Windows cleanup files', (Fmt $extra)) }
+
+$rowsTop = 342
+$btnTop  = $rowsTop + ($rows.Count * 36) + 24
+$formH   = $btnTop + 40 + 28
+
+$form = New-Object System.Windows.Forms.Form
+$form.AutoScaleDimensions = New-Object System.Drawing.SizeF(96, 96)
+$form.AutoScaleMode = 'Dpi'
+$form.Text = 'Windows Deep Cleaner'
+$form.FormBorderStyle = 'FixedDialog'
+$form.MaximizeBox = $false
+$form.MinimizeBox = $false
+$form.StartPosition = 'CenterScreen'
+$form.BackColor = [System.Drawing.Color]::White
+$form.TopMost = $true
+$form.ClientSize = New-Object System.Drawing.Size(760, $formH)
+
+# check circle
+$chk = New-Object System.Windows.Forms.Panel
+$chk.Location = New-Object System.Drawing.Point(40, 28)
+$chk.Size = New-Object System.Drawing.Size(56, 56)
+$chk.BackColor = [System.Drawing.Color]::White
+$chk.Add_Paint({
+    param($s, $e)
+    $g = $e.Graphics
+    $g.SmoothingMode = 'AntiAlias'
+    $b = New-Object System.Drawing.SolidBrush($cGreenBg)
+    $g.FillEllipse($b, 1, 1, ($s.Width - 3), ($s.Height - 3))
+    $pen = New-Object System.Drawing.Pen($cGreen, [single]($s.Width * 0.075))
+    $pen.StartCap = 'Round'
+    $pen.EndCap = 'Round'
+    $pen.LineJoin = 'Round'
+    $w = $s.Width
+    $h = $s.Height
+    $pts = [System.Drawing.PointF[]]@(
+        (New-Object System.Drawing.PointF(($w * 0.28), ($h * 0.52))),
+        (New-Object System.Drawing.PointF(($w * 0.44), ($h * 0.67))),
+        (New-Object System.Drawing.PointF(($w * 0.72), ($h * 0.36)))
+    )
+    $g.DrawLines($pen, $pts)
+})
+$form.Controls.Add($chk)
+
+$sub = 'Your C: drive is lighter and cleaner.'
+if ($freed -lt 10MB) { $sub = 'Your drive was already mostly clean.' }
+$form.Controls.Add((New-Label 'Cleanup complete' 112 26 600 36 20 'Segoe UI Semibold' 'Regular' $cDark 'MiddleLeft'))
+$form.Controls.Add((New-Label $sub 112 60 600 24 10.5 'Segoe UI' 'Regular' $cMuted 'MiddleLeft'))
+
+# metric cards
+$card1 = New-Object System.Windows.Forms.Panel
+$card1.Location = New-Object System.Drawing.Point(40, 112)
+$card1.Size = New-Object System.Drawing.Size(332, 112)
+$card1.BackColor = $cCard
+$card1.Controls.Add((New-Label 'Junk found' 20 14 290 22 10 'Segoe UI' 'Regular' $cMuted 'MiddleLeft'))
+$card1.Controls.Add((New-Label (Fmt $junk) 20 36 290 46 26 'Segoe UI Semibold' 'Regular' $cDark 'MiddleLeft'))
+$card1.Controls.Add((New-Label 'Unnecessary files on your drive' 20 82 290 20 9 'Segoe UI' 'Regular' $cMuted 'MiddleLeft'))
+$form.Controls.Add($card1)
+
+$card2 = New-Object System.Windows.Forms.Panel
+$card2.Location = New-Object System.Drawing.Point(388, 112)
+$card2.Size = New-Object System.Drawing.Size(332, 112)
+$card2.BackColor = $cGreenBg
+$card2.Controls.Add((New-Label 'Space freed' 20 14 290 22 10 'Segoe UI' 'Regular' $cGreen 'MiddleLeft'))
+$card2.Controls.Add((New-Label (Fmt $freed) 20 36 290 46 26 'Segoe UI Semibold' 'Regular' $cGreenD 'MiddleLeft'))
+$card2.Controls.Add((New-Label ("$pct% of it removed") 20 82 290 20 9 'Segoe UI' 'Regular' $cGreen 'MiddleLeft'))
+$form.Controls.Add($card2)
+$cards = @($card1, $card2)
+
+# free space before -> after
+$form.Controls.Add((New-Label 'Free space on C:' 40 248 300 26 10.5tateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Windows Error Reporting Files" /v StateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
 reg add "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\VolumeCaches\Windows Upgrade Log Files" /v StateFlags0064 /t REG_DWORD /d 2 /f >nul 2>&1
 
