@@ -35,11 +35,11 @@
 
 ## ⚡ Overview
 
-Third-party cleaner utilities are notorious for bundling adware, running background telemetry daemons, and charging subscriptions for basic administrative tasks. 
+Windows Deep Cleaner is a lightweight Windows cleanup tool built with Batch scripting. 🧹
 
-**Windows Deep Cleaner (WDC)** takes a pragmatic, systems-engineering approach: it leverages native Windows binaries (`cmd`, `del`, `cleanmgr.exe`, `reg.exe`, and PowerShell) to purge transient system data, forensic execution traces, and gigabytes of accumulated cache.
+With just one click, it helps remove temporary files, clear selected caches, clean recent-file history, and free up disk space.
 
-No installers, no background processes, no telemetry.
+⚡ Simple to use. No extra software required.
 
 ---
 
